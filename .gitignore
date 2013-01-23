@@ -1,0 +1,5 @@
+*.user
+*.dll
+*.pdb
+bin
+obj
