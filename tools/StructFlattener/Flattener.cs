@@ -132,6 +132,14 @@ namespace StructFlattener
           string simpleTypeName = attr.Type is SimpleType ? ((SimpleType)attr.Type).Identifier : null;
           if (simpleTypeName != null && !simpleTypeName.EndsWith("Attribute", StringComparison.Ordinal))
             simpleTypeName += "Attribute";
+          //Is it a struct that is itself marked anonymous? Then remove it completely
+          if (decl is TypeDeclaration &&
+            ((TypeDeclaration)decl).TypeKeyword.Role == Roles.StructKeyword &&
+            simpleTypeName == "AnonymousStructAttribute")
+          {
+            toDelete.Add(decl);
+            break; //Not much in removing the attributes then...
+          }
           if (specialAttributeNames.Contains(simpleTypeName))
             toDelete.Add(attr);
         }
@@ -650,6 +658,7 @@ namespace StructFlattener
     private EntityDeclaration ProcessNestedStructMember(EntityDeclaration curNewMember,
       TypeDeclaration inlineStruct, FlattenStructState s)
     {
+      EntityDeclaration nextMember;
       int alignmentSize = inlineStruct.Annotation<FlattenedStructAnnotation>().LargestMemberAlignSize;
       s.largestMemberAlignmentSize = Math.Max(s.largestMemberAlignmentSize, alignmentSize);
       int effectivePack = Math.Min(s.structLayout.Pack, alignmentSize);
@@ -688,6 +697,7 @@ namespace StructFlattener
         }
         startMember = newFields[0];
         startMemberName = GetFieldName(startMember);
+        nextMember = GetNextField(newFields[newFields.Count - 1]);
       }
       else
       {
@@ -698,6 +708,7 @@ namespace StructFlattener
         curNewMember.ReplaceWith(startMember);
         s.UpdateResolver();
         SetFieldOffsetAttribute(startMember, s.alignedOffset, s.astBuilder, s.newResolver);
+        nextMember = GetNextField(startMember);
       }
 
       if (!isAnonymous)
@@ -706,7 +717,7 @@ namespace StructFlattener
           "_Ref", startMemberName);
         s.newStruct.Members.InsertAfter(startMember, refProp);
       }
-      return GetNextField(startMember);
+      return nextMember;
     }
 
     private PropertyDeclaration CreateReferenceProperty(TypeDeclaration @struct,
