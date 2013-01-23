@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 	//The Win32ThreadInfo / W32THREAD
 	//http://blog.csdn.net/coffeemay/article/details/1238777
 	//http://www.reactos.org/wiki/Techwiki:Win32k/THREADINFO
-	[StructLayout ((LayoutKind)2, Pack = 1, Size = 228)]
+	[StructLayout ((LayoutKind)2, Pack = 1, Size = 208)]
 	public unsafe struct THREADINFO
 	{
 		private const int WH_MIN = -1;
@@ -94,41 +94,41 @@ using System.Runtime.InteropServices;
 
 		[FieldOffset (84)]
 		public IntPtr /*PTDB*/ptdb;
-		[FieldOffset (88)]
+		[FieldOffset (84)]
 		public IntPtr /*PWINDOWSTATION*/pwinsta;
-		/*PSVR_INSTANCE_INFO*/[FieldOffset (92)]
+		/*PSVR_INSTANCE_INFO*/[FieldOffset (88)]
 		public IntPtr psiiList;
 		// thread DDEML instance list
-		[FieldOffset (96)]
+		[FieldOffset (92)]
 		public int dwExpWinVer;
-		[FieldOffset (100)]
+		[FieldOffset (96)]
 		public int dwCompatFlags;
 		// The Win 3.1 Compat flags
-		[FieldOffset (104)]
+		[FieldOffset (100)]
 		public int dwCompatFlags2;
 		// new DWORD to extend compat flags for NT5+ features
-		/*PQ*/[FieldOffset (108)]
+		/*PQ*/[FieldOffset (104)]
 		public IntPtr pqAttach;
 		// calculation variabled used in
 		// zzzAttachThreadInput()
-		[FieldOffset (112)]
+		[FieldOffset (108)]
 		public THREADINFO* ptiSibling;
 		// pointer to sibling thread info
-		/*PMOVESIZEDATA*/[FieldOffset (116)]
+		/*PMOVESIZEDATA*/[FieldOffset (112)]
 		public IntPtr pmsd;
-		[FieldOffset (120)]
+		[FieldOffset (116)]
 		public int fsHooks;
 		// WHF_ Flags for which hooks are installed
-		/*PHOOK*/[FieldOffset (124)]
+		/*PHOOK*/[FieldOffset (120)]
 		public IntPtr sphkCurrent;
 		// Hook this thread is currently processing
-		/*PSBTRACK*/[FieldOffset (128)]
+		/*PSBTRACK*/[FieldOffset (124)]
 		public IntPtr pSBTrack;
-		/*HANDLE*/[FieldOffset (132)]
+		/*HANDLE*/[FieldOffset (128)]
 		public IntPtr hEventQueueClient;
-		/*PKEVENT*/[FieldOffset (136)]
+		/*PKEVENT*/[FieldOffset (132)]
 		public IntPtr pEventQueueServer;
-		[FieldOffset (140)]
+		[FieldOffset (136)]
 		public LIST_ENTRY* PtiLink_Flink;
 		public unsafe LIST_ENTRY* PtiLink_Ref {
 			get {
@@ -136,13 +136,13 @@ using System.Runtime.InteropServices;
 					return (LIST_ENTRY*)&__s->PtiLink_Flink;
 			}
 		}
-		[FieldOffset (148)]
+		[FieldOffset (140)]
 		public LIST_ENTRY* PtiLink_Blink;
 		// Link to other threads on desktop
-		[FieldOffset (152)]
+		[FieldOffset (144)]
 		public int iCursorLevel;
 		// keep track of each thread's level
-		[FieldOffset (156)]
+		[FieldOffset (148)]
 		public int ptLast_x;
 		public unsafe POINT* ptLast_Ref {
 			get {
@@ -150,20 +150,20 @@ using System.Runtime.InteropServices;
 					return (POINT*)&__s->ptLast_x;
 			}
 		}
-		[FieldOffset (164)]
+		[FieldOffset (152)]
 		public int ptLast_y;
-		/*PWND*/[FieldOffset (168)]
+		/*PWND*/[FieldOffset (156)]
 		public IntPtr spwndDefaultIme;
 		// Default IME Window for this thread
-		/*PIMC*/[FieldOffset (172)]
+		/*PIMC*/[FieldOffset (160)]
 		public IntPtr spDefaultImc;
 		// Default input context for this thread
-		/*HKL*/[FieldOffset (176)]
+		/*HKL*/[FieldOffset (164)]
 		public IntPtr hklPrev;
 		// Previous active keyboard layout
-		[FieldOffset (180)]
+		[FieldOffset (168)]
 		public int cEnterCount;
-		/*PQMSG*/[FieldOffset (184)]
+		/*PQMSG*/[FieldOffset (172)]
 		IntPtr mlPost_pqmsgRead;
 		public unsafe MLIST* mlPost_Ref {
 			get {
@@ -171,31 +171,31 @@ using System.Runtime.InteropServices;
 					return (MLIST*)&__s->mlPost_pqmsgRead;
 			}
 		}
-		/*PQMSG*/[FieldOffset (196)]
+		/*PQMSG*/[FieldOffset (176)]
 		IntPtr mlPost_pqmsgWriteLast;
-		[FieldOffset (200)]
+		[FieldOffset (180)]
 		int mlPost_cMsgs;
 		// posted message list.
-		[FieldOffset (204)]
+		[FieldOffset (184)]
 		public ushort fsChangeBitsRemoved;
 		// Bits removed during PeekMessage
-		[FieldOffset (206)]
+		[FieldOffset (186)]
 		public char wchInjected;
 		// character from last VK_PACKET
-		[FieldOffset (208)]
+		[FieldOffset (188)]
 		public int fsReserveKeys;
 		// Keys that must be sent to the active
 		// active console window.
-		[FieldOffset (212)]
+		[FieldOffset (192)]
 		public IntPtr/*PKEVENT*/* apEvent;
 		// Wait array for xxxPollAndWaitForSingleObject
-		/*ACCESS_MASK*/[FieldOffset (216)]
+		/*ACCESS_MASK*/[FieldOffset (196)]
 		public int amdesk;
 		// Granted desktop access
-		[FieldOffset (220)]
+		[FieldOffset (200)]
 		public uint cWindows;
 		// Number of windows owned by this thread
-		[FieldOffset (224)]
+		[FieldOffset (204)]
 		public uint cVisWindows;
 		// Number of visible windows on this thread
 		//CWINHOOKS is windows version dependent

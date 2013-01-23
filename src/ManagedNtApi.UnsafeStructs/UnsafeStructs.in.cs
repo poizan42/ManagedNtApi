@@ -48,8 +48,8 @@ namespace ManagedNtApi.Unsafe
     [Union, AnonymousStruct]
     public struct FiberOrVersionUnion
     {
-      IntPtr FiberData;
-      int Version;
+      public IntPtr FiberData;
+      public int Version;
     }
     [AnonymousStruct]
     public FiberOrVersionUnion fv; 

@@ -40,7 +40,7 @@ namespace StructFlattener
         this.LargestMemberAlignSize = largestMemberAlignSize;
       }
     }
-    
+
     private class FlattenedStructMemberAnnotation
     {
       public int Offset;
@@ -93,8 +93,19 @@ namespace StructFlattener
       var structs = root.Descendants.OfType<TypeDeclaration>()
         .Where(n => n.TypeKeyword.Role == Roles.StructKeyword);
 
+      /* We need to start "depth most" so that we don't end up replacing
+       * inner structs in already replaced structs. */
+      //Tuple: depth, struct declaration
+      var structsToProcess = new List<Tuple<int, TypeDeclaration>>();
+
       foreach (var s in structs)
-        FlattenAndReplaceStructIfNeeded(s);
+        structsToProcess.Add(Tuple.Create(s.Ancestors.Count(), s));
+
+      //Sort deepest first
+      structsToProcess.Sort((t1, t2) => t2.Item1 - t1.Item1);
+
+      foreach (var t in structsToProcess)
+        FlattenAndReplaceStructIfNeeded(t.Item2);
 
       CleanUpAttributes();
 

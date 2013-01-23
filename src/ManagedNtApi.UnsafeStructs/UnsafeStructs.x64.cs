@@ -33,7 +33,7 @@ namespace ManagedNtApi.Unsafe
 	}
 	// Based on wine's winnt.h, winternl.h definitions
 	//struct _EXCEPTION_REGISTRATION_RECORD *ExceptionList;
-	[StructLayout ((LayoutKind)2, Pack = 1, Size = 64)]
+	[StructLayout ((LayoutKind)2, Pack = 1, Size = 56)]
 	public unsafe struct NT_TIB
 	{
 		[FieldOffset (0)]
@@ -44,18 +44,13 @@ namespace ManagedNtApi.Unsafe
 		public IntPtr StackLimit;
 		[FieldOffset (24)]
 		public IntPtr SubSystemTib;
-		public struct FiberOrVersionUnion
-		{
-			IntPtr FiberData;
-			int Version;
-		}
 		[FieldOffset (32)]
-		IntPtr FiberData;
+		public IntPtr FiberData;
+		[FieldOffset (32)]
+		public int Version;
 		[FieldOffset (40)]
-		int Version;
-		[FieldOffset (48)]
 		public IntPtr ArbitraryUserPointer;
-		[FieldOffset (56)]
+		[FieldOffset (48)]
 		public NT_TIB* Self;
 	}
 	[StructLayout (LayoutKind.Sequential)]
@@ -95,7 +90,7 @@ namespace ManagedNtApi.Unsafe
 	#if X64
 	/*     17b8 */
 	#endif
-	/* fb4/17c8 */[StructLayout ((LayoutKind)2, Pack = 1, Size = 7488)]
+	/* fb4/17c8 */[StructLayout ((LayoutKind)2, Pack = 1, Size = 6096)]
 	public unsafe struct TEB
 	{
 		[FieldOffset (0)]
@@ -106,23 +101,23 @@ namespace ManagedNtApi.Unsafe
 					return (NT_TIB*)&__s->Tib_ExceptionList;
 			}
 		}
-		[FieldOffset (64)]
+		[FieldOffset (8)]
 		public IntPtr Tib_StackBase;
-		[FieldOffset (72)]
+		[FieldOffset (16)]
 		public IntPtr Tib_StackLimit;
-		[FieldOffset (80)]
+		[FieldOffset (24)]
 		public IntPtr Tib_SubSystemTib;
-		[FieldOffset (88)]
-		IntPtr Tib_FiberData;
-		[FieldOffset (96)]
-		int Tib_Version;
-		[FieldOffset (104)]
+		[FieldOffset (32)]
+		public IntPtr Tib_FiberData;
+		[FieldOffset (32)]
+		public int Tib_Version;
+		[FieldOffset (40)]
 		public IntPtr Tib_ArbitraryUserPointer;
-		[FieldOffset (112)]
+		[FieldOffset (48)]
 		public NT_TIB* Tib_Self;
-		[FieldOffset (120)]
+		[FieldOffset (56)]
 		public IntPtr EnvironmentPointer;
-		/*HANDLE*/[FieldOffset (128)]
+		/*HANDLE*/[FieldOffset (64)]
 		public IntPtr ClientId_UniqueProcess;
 		public unsafe CLIENT_ID* ClientId_Ref {
 			get {
@@ -130,31 +125,31 @@ namespace ManagedNtApi.Unsafe
 					return (CLIENT_ID*)&__s->ClientId_UniqueProcess;
 			}
 		}
-		/*HANDLE*/[FieldOffset (144)]
+		/*HANDLE*/[FieldOffset (72)]
 		public IntPtr ClientId_UniqueThread;
-		[FieldOffset (152)]
+		[FieldOffset (80)]
 		public IntPtr ActiveRpcHandle;
-		[FieldOffset (160)]
+		[FieldOffset (88)]
 		public IntPtr ThreadLocalStoragePointer;
-		/*PPEB*/[FieldOffset (168)]
+		/*PPEB*/[FieldOffset (96)]
 		public IntPtr Peb;
-		[FieldOffset (176)]
+		[FieldOffset (104)]
 		public uint LastErrorValue;
-		[FieldOffset (180)]
+		[FieldOffset (108)]
 		public uint CountOfOwnedCriticalSections;
-		[FieldOffset (184)]
+		[FieldOffset (112)]
 		public IntPtr CsrClientThread;
-		[FieldOffset (192)]
+		[FieldOffset (120)]
 		public IntPtr Win32ThreadInfo;
-		[FieldOffset (200)]
+		[FieldOffset (128)]
 		public fixed uint Win32ClientInfo[31];
-		[FieldOffset (328)]
+		[FieldOffset (256)]
 		public IntPtr WOW32Reserved;
-		[FieldOffset (336)]
+		[FieldOffset (264)]
 		public uint CurrentLocale;
-		[FieldOffset (340)]
+		[FieldOffset (268)]
 		public uint FpSoftwareStatusRegister;
-		[FieldOffset (344)]
+		[FieldOffset (272)]
 		public IntPtr SystemReserved1_Start;
 		public unsafe IntPtr* SystemReserved1 {
 			get {
@@ -162,9 +157,9 @@ namespace ManagedNtApi.Unsafe
 					return (IntPtr*)&__s->SystemReserved1_Start;
 			}
 		}
-		[FieldOffset (776)]
+		[FieldOffset (704)]
 		public int ExceptionCode;
-		[FieldOffset (784)]
+		[FieldOffset (712)]
 		public IntPtr ActivationContextStack_ActiveFrame;
 		public unsafe ACTIVATION_CONTEXT_STACK* ActivationContextStack_Ref {
 			get {
@@ -172,19 +167,19 @@ namespace ManagedNtApi.Unsafe
 					return (ACTIVATION_CONTEXT_STACK*)&__s->ActivationContextStack_ActiveFrame;
 			}
 		}
-		[FieldOffset (832)]
+		[FieldOffset (720)]
 		public LIST_ENTRY* ActivationContextStack_FrameListCache_Flink;
-		[FieldOffset (840)]
+		[FieldOffset (728)]
 		public LIST_ENTRY* ActivationContextStack_FrameListCache_Blink;
-		[FieldOffset (848)]
+		[FieldOffset (736)]
 		public uint ActivationContextStack_Flags;
-		[FieldOffset (852)]
+		[FieldOffset (740)]
 		public uint ActivationContextStack_NextCookieSequenceNumber;
-		[FieldOffset (856)]
+		[FieldOffset (744)]
 		public uint ActivationContextStack_StackId;
-		[FieldOffset (860)]
+		[FieldOffset (748)]
 		public fixed byte SpareBytes1[20];
-		[FieldOffset (880)]
+		[FieldOffset (768)]
 		public IntPtr SystemReserved2_Start;
 		public unsafe IntPtr* SystemReserved2 {
 			get {
@@ -192,7 +187,7 @@ namespace ManagedNtApi.Unsafe
 					return (IntPtr*)&__s->SystemReserved2_Start;
 			}
 		}
-		[FieldOffset (960)]
+		[FieldOffset (848)]
 		public uint GdiTebBatch_Offset;
 		public unsafe GDI_TEB_BATCH* GdiTebBatch_Ref {
 			get {
@@ -200,17 +195,17 @@ namespace ManagedNtApi.Unsafe
 					return (GDI_TEB_BATCH*)&__s->GdiTebBatch_Offset;
 			}
 		}
-		/*HANDLE*/[FieldOffset (2216)]
+		/*HANDLE*/[FieldOffset (856)]
 		public IntPtr GdiTebBatch_HDC;
-		[FieldOffset (2224)]
+		[FieldOffset (864)]
 		public fixed uint GdiTebBatch_Buffer[0x136];
-		/*HANDLE*/[FieldOffset (3464)]
+		/*HANDLE*/[FieldOffset (2104)]
 		public IntPtr gdiRgn;
-		/*HANDLE*/[FieldOffset (3472)]
+		/*HANDLE*/[FieldOffset (2112)]
 		public IntPtr gdiPen;
-		/*HANDLE*/[FieldOffset (3480)]
+		/*HANDLE*/[FieldOffset (2120)]
 		public IntPtr gdiBrush;
-		/*HANDLE*/[FieldOffset (3488)]
+		/*HANDLE*/[FieldOffset (2128)]
 		public IntPtr RealClientId_UniqueProcess;
 		public unsafe CLIENT_ID* RealClientId_Ref {
 			get {
@@ -218,19 +213,19 @@ namespace ManagedNtApi.Unsafe
 					return (CLIENT_ID*)&__s->RealClientId_UniqueProcess;
 			}
 		}
-		/*HANDLE*/[FieldOffset (3504)]
+		/*HANDLE*/[FieldOffset (2136)]
 		public IntPtr RealClientId_UniqueThread;
-		/*HANDLE*/[FieldOffset (3512)]
+		/*HANDLE*/[FieldOffset (2144)]
 		public IntPtr GdiCachedProcessHandle;
-		[FieldOffset (3520)]
+		[FieldOffset (2152)]
 		public uint GdiClientPID;
-		[FieldOffset (3524)]
+		[FieldOffset (2156)]
 		public uint GdiClientTID;
-		[FieldOffset (3528)]
+		[FieldOffset (2160)]
 		public IntPtr GdiThreadLocaleInfo;
-		[FieldOffset (3536)]
+		[FieldOffset (2168)]
 		public fixed uint UserReserved[5];
-		[FieldOffset (3560)]
+		[FieldOffset (2192)]
 		public IntPtr glDispatchTable_Start;
 		public unsafe IntPtr* glDispatchTable {
 			get {
@@ -238,7 +233,7 @@ namespace ManagedNtApi.Unsafe
 					return (IntPtr*)&__s->glDispatchTable_Start;
 			}
 		}
-		[FieldOffset (5800)]
+		[FieldOffset (4432)]
 		public IntPtr glReserved1_Start;
 		public unsafe IntPtr* glReserved1 {
 			get {
@@ -246,21 +241,21 @@ namespace ManagedNtApi.Unsafe
 					return (IntPtr*)&__s->glReserved1_Start;
 			}
 		}
-		[FieldOffset (6008)]
+		[FieldOffset (4640)]
 		public IntPtr glReserved2;
-		[FieldOffset (6016)]
+		[FieldOffset (4648)]
 		public IntPtr glSectionInfo;
-		[FieldOffset (6024)]
+		[FieldOffset (4656)]
 		public IntPtr glSection;
-		[FieldOffset (6032)]
+		[FieldOffset (4664)]
 		public IntPtr glTable;
-		[FieldOffset (6040)]
+		[FieldOffset (4672)]
 		public IntPtr glCurrentRC;
-		[FieldOffset (6048)]
+		[FieldOffset (4680)]
 		public IntPtr glContext;
-		[FieldOffset (6056)]
+		[FieldOffset (4688)]
 		public uint LastStatusValue;
-		[FieldOffset (6064)]
+		[FieldOffset (4696)]
 		public ushort StaticUnicodeString_Length;
 		public unsafe UNICODE_STRING* StaticUnicodeString_Ref {
 			get {
@@ -268,11 +263,11 @@ namespace ManagedNtApi.Unsafe
 					return (UNICODE_STRING*)&__s->StaticUnicodeString_Length;
 			}
 		}
-		[FieldOffset (6080)]
+		[FieldOffset (4698)]
 		public ushort StaticUnicodeString_MaximumLength;
-		[FieldOffset (6088)]
+		[FieldOffset (4704)]
 		public char* StaticUnicodeString_buffer;
-		[FieldOffset (6096)]
+		[FieldOffset (4712)]
 		public Char StaticUnicodeBuffer_Start;
 		public unsafe Char* StaticUnicodeBuffer {
 			get {
@@ -280,9 +275,9 @@ namespace ManagedNtApi.Unsafe
 					return (Char*)&__s->StaticUnicodeBuffer_Start;
 			}
 		}
-		[FieldOffset (6624)]
+		[FieldOffset (5240)]
 		public IntPtr DeallocationStack;
-		[FieldOffset (6632)]
+		[FieldOffset (5248)]
 		public IntPtr TlsSlots_Start;
 		public unsafe IntPtr* TlsSlots {
 			get {
@@ -290,7 +285,7 @@ namespace ManagedNtApi.Unsafe
 					return (IntPtr*)&__s->TlsSlots_Start;
 			}
 		}
-		[FieldOffset (7144)]
+		[FieldOffset (5760)]
 		public LIST_ENTRY* TlsLinks_Flink;
 		public unsafe LIST_ENTRY* TlsLinks_Ref {
 			get {
@@ -298,13 +293,13 @@ namespace ManagedNtApi.Unsafe
 					return (LIST_ENTRY*)&__s->TlsLinks_Flink;
 			}
 		}
-		[FieldOffset (7160)]
+		[FieldOffset (5768)]
 		public LIST_ENTRY* TlsLinks_Blink;
-		[FieldOffset (7168)]
+		[FieldOffset (5776)]
 		public IntPtr Vdm;
-		[FieldOffset (7176)]
+		[FieldOffset (5784)]
 		public IntPtr ReservedForNtRpc;
-		[FieldOffset (7184)]
+		[FieldOffset (5792)]
 		public IntPtr DbgSsReserved_Start;
 		public unsafe IntPtr* DbgSsReserved {
 			get {
@@ -312,9 +307,9 @@ namespace ManagedNtApi.Unsafe
 					return (IntPtr*)&__s->DbgSsReserved_Start;
 			}
 		}
-		[FieldOffset (7200)]
+		[FieldOffset (5808)]
 		public uint HardErrorDisabled;
-		[FieldOffset (7208)]
+		[FieldOffset (5816)]
 		public IntPtr Instrumentation_Start;
 		public unsafe IntPtr* Instrumentation {
 			get {
@@ -322,21 +317,21 @@ namespace ManagedNtApi.Unsafe
 					return (IntPtr*)&__s->Instrumentation_Start;
 			}
 		}
-		[FieldOffset (7336)]
+		[FieldOffset (5944)]
 		public IntPtr WinSockData;
-		[FieldOffset (7344)]
+		[FieldOffset (5952)]
 		public uint GdiBatchCount;
-		[FieldOffset (7348)]
+		[FieldOffset (5956)]
 		public uint Spare2;
-		[FieldOffset (7352)]
+		[FieldOffset (5960)]
 		public IntPtr Spare3;
-		[FieldOffset (7360)]
+		[FieldOffset (5968)]
 		public IntPtr Spare4;
-		[FieldOffset (7368)]
+		[FieldOffset (5976)]
 		public IntPtr ReservedForOle;
-		[FieldOffset (7376)]
+		[FieldOffset (5984)]
 		public uint WaitingOnLoaderLock;
-		[FieldOffset (7384)]
+		[FieldOffset (5992)]
 		public IntPtr Reserved5_Start;
 		public unsafe IntPtr* Reserved5 {
 			get {
@@ -344,23 +339,23 @@ namespace ManagedNtApi.Unsafe
 					return (IntPtr*)&__s->Reserved5_Start;
 			}
 		}
-		[FieldOffset (7408)]
+		[FieldOffset (6016)]
 		public IntPtr* TlsExpansionSlots;
-		[FieldOffset (7416)]
+		[FieldOffset (6024)]
 		public uint ImpersonationLocale;
-		[FieldOffset (7420)]
+		[FieldOffset (6028)]
 		public uint IsImpersonating;
-		[FieldOffset (7424)]
+		[FieldOffset (6032)]
 		public IntPtr NlsCache;
-		[FieldOffset (7432)]
+		[FieldOffset (6040)]
 		public IntPtr ShimData;
-		[FieldOffset (7440)]
+		[FieldOffset (6048)]
 		public uint HeapVirtualAffinity;
-		[FieldOffset (7448)]
+		[FieldOffset (6056)]
 		public IntPtr CurrentTransactionHandle;
-		[FieldOffset (7456)]
+		[FieldOffset (6064)]
 		public IntPtr ActiveFrame;
-		[FieldOffset (7464)]
+		[FieldOffset (6072)]
 		public IntPtr unknown_Start;
 		public unsafe IntPtr* unknown {
 			get {
@@ -368,7 +363,7 @@ namespace ManagedNtApi.Unsafe
 					return (IntPtr*)&__s->unknown_Start;
 			}
 		}
-		[FieldOffset (7480)]
+		[FieldOffset (6088)]
 		public IntPtr* FlsSlots;
 	}
 	public struct POINT
